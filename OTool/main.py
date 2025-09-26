@@ -30,11 +30,12 @@ def update_chosenfile_binarydata(designer_path, md5file):
     newmd5data = check_update_file(designer_path, md5file)
     with open(md5file, 'r', encoding='utf-8') as file:
         oldmd5data = json.load(file)  # 读取 JSON 数据
-    for key, value in oldmd5data.items():
-        if key not in newmd5data:
-            newmd5data[key] = value
+    for key, value in newmd5data.items():
+        if key not in oldmd5data or oldmd5data[key] != value:
+            oldmd5data[key] = value
+            #导表函数入口
     with open(md5file, 'w', encoding='utf-8') as file:
-        json.dump(newmd5data, file, ensure_ascii=False, indent=4)
+        json.dump(oldmd5data, file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":

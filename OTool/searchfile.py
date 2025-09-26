@@ -5,6 +5,7 @@
 #
 import os
 
+# 输出目录下面所有文件
 def list_files_in_directory(directory):
     try:
         filelist = []
