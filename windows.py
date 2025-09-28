@@ -6,19 +6,25 @@
 import os
 import GlobData
 
-###Card数据###
+###PockerCard图形数据###
 #长宽
-VCARD = 15
-HCARD = 15
+VCARD = 10 # 长
+HCARD = 15 # 宽
 #花色点数起始行
 SUITPOINTHOR = 1
 #花色点数起始列
 SUITPOINTVER = 1
 
+### 小丑牌图形数据 ***
+
+### 出牌区图形数据 ***
+VTABLE = VCARD
+HTABLE = HCARD*5
+
 ###信息栏###
 #信息栏大小
-VIB = 10
-HIB = 100
+VIB = VCARD
+HIB = HCARD * 8
 #牌堆信息起始行
 IBHOR = 2
 IBVER = 1
@@ -35,6 +41,16 @@ class window:
         self.PaintingCardsFrame(1, VIB, HIB)
         barstr = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
         self.PaintingCommonTXT(barstr, IBVER, IBHOR)
+        self.Painting()
+        self.CleanBoard()
+        # 小丑牌&塔罗牌
+        self.PaintingCardsFrame(5, VCARD, HCARD)
+        JTstr = "空位"
+        self.PaintingCommonTXT(JTstr, int(HCARD/2), int(VCARD/2))
+        self.Painting()
+        self.CleanBoard()
+        # 出牌区
+        self.PaintingCardsFrame(1,VTABLE, HTABLE)
         self.Painting()
         self.CleanBoard()
         # 手牌
@@ -61,11 +77,11 @@ class window:
     #绘制扑克牌花色和点数
     def PaintingCardPointSuit(self):
         handcardcnt = len(self.cards.hand)
-        start = SUITPOINTVER - VCARD
+        start = SUITPOINTVER - HCARD
         for i in range(handcardcnt):
             item_card = self.cards.hand[i]
             strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
-            start = start + VCARD
+            start = start + HCARD
             end = start + len(strsuitpoint)
             self.artboard[SUITPOINTHOR] = self.artboard[SUITPOINTHOR][:start] + strsuitpoint + self.artboard[SUITPOINTHOR][end:]
     #打印
@@ -79,4 +95,7 @@ class window:
     def PaintingCommonTXT(self, str, ver, hor):
         strcnt = len(str.encode('gbk'))
         self.artboard[hor] = self.artboard[hor][:ver] + str + self.artboard[hor][strcnt+ver:]
+    #小丑牌&塔罗牌绘制
+    def PaintingJockerTarot(self):
+        pass
 
