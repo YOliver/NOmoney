@@ -5,7 +5,6 @@
 #
 import GlobData
 import CardManage
-import windows
 
 if __name__ == "__main__":
     print("小丑牌启动...")
@@ -16,7 +15,7 @@ if __name__ == "__main__":
         Cards.Sorting(GlobData.SORTFORPOINT)
         playing_card = False
         while playing_card == False:
-            windows.PaintingMainWindows(Cards)
+            Cards.PaintingMainWindows()
             print("你的操作>:")
             arg = input().split()
             button = arg[0]

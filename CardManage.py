@@ -5,6 +5,7 @@
 #
 import GlobData
 import random
+import windows
 
 class Card:
     def __init__(self,point,suit,buff) -> None:
@@ -17,7 +18,9 @@ class Cards:
     cemetery=[]
     hand=[]
     roundplayingcardrecord=[]
+    win = None
     def __init__(self) -> None:
+        self.win = windows.window(self)
         for item_card in GlobData.BASIC_HAND:
             item = Card(item_card[0],item_card[1], item_card[2])
             self.deck.append(item)
@@ -36,9 +39,6 @@ class Cards:
         for i in range(GlobData.BASIC_HAND_NUM - cnthand):
             item_card = self.deck.pop()
             self.hand.append(item_card)
-    def ShowHand(self):#展示手牌
-        for card in self.hand:
-            print(GlobData.POINT[card.point],GlobData.SUIT[card.suit],card.buff)
     def Sorting(self, sorttype):#排序
         if sorttype == GlobData.SORTFORPOINT:
             self.hand = sorted(self.hand, key=lambda x: (x.point, x.suit))
@@ -57,3 +57,5 @@ class Cards:
         self.hand = new_hand
         self.cemetery.extend(roundplayingcardrecord)
         return True
+    def PaintingMainWindows(self):
+            self.win.PaintingMainWindows()

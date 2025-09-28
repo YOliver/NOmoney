@@ -3,76 +3,80 @@
 #   模仿小丑牌项目 
 #   显示界面管理模块
 #
-import sys
 import os
 import GlobData
 
-#界面大小
-VERTICAL = 50
-HORIZONTAL = 100
-#Card大小
+###Card数据###
+#长宽
 VCARD = 15
 HCARD = 15
-#点数和花色显示的行号
+#花色点数起始行
 SUITPOINTHOR = 1
-#牌堆数量显示行号
-DECKCNTHOR= 1
-#信息栏大小
-VIB = 5
-HIB = 50
+#花色点数起始列
+SUITPOINTVER = 1
 
-# 手牌绘制
-def PaintingHandCard(Cards):
+###信息栏###
+#信息栏大小
+VIB = 10
+HIB = 100
+#牌堆信息起始行
+IBHOR = 2
+IBVER = 1
+
+
+class window:
     artboard = []
-    for item_card in Cards.hand:
-        for j in range(VCARD):
-            itemhorizontal = ""
-            for i in range(HCARD):
-                if j == 0 or j == VCARD - 1:
-                    itemhorizontal=itemhorizontal+"+"
-                else:
-                    if i == 0 or i == HCARD - 1:
+    cards = None
+    def __init__(self, cards) -> None:
+        self.cards = cards
+    def PaintingMainWindows(self):
+        os.system('cls')
+        # 信息栏
+        self.PaintingCardsFrame(1, VIB, HIB)
+        barstr = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
+        self.PaintingCommonTXT(barstr, IBVER, IBHOR)
+        self.Painting()
+        self.CleanBoard()
+        # 手牌
+        self.PaintingCardsFrame(len(self.cards.hand), VCARD, HCARD)
+        self.PaintingCardPointSuit()
+        self.Painting()
+        self.CleanBoard()
+    #牌框绘制        
+    def PaintingCardsFrame(self, cnt, ver, hor):
+        for _ in range(cnt):
+            for j in range(ver):
+                itemhorizontal = ""
+                for i in range(hor):
+                    if j == 0 or j == ver - 1:
                         itemhorizontal=itemhorizontal+"+"
                     else:
-                        itemhorizontal=itemhorizontal+" "
-            # 绘制点数和花色
-            if j == SUITPOINTHOR:
-                strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
-                itemhorizontal = itemhorizontal[:2]+strsuitpoint+itemhorizontal[4:]
-            # 整行拼接
-            if j>=len(artboard):
-                artboard.append("")
-            artboard[j]=artboard[j] + " " + itemhorizontal
-    
-    # 界面打印
-    for itemhorizontal in artboard: 
-        print(itemhorizontal)
-# 信息打印
-def PaintingInfoBar(Cards):
-    artboard = []
-    for j in range(VIB):
-        itemhorizontal = ""
-        for i in range(HIB):
-            if j == 0 or j == VIB-1:
-                itemhorizontal = itemhorizontal+"+"
-            elif i == 0 or i == HIB-1:
-                itemhorizontal = itemhorizontal+"+"
-            else:
-                itemhorizontal = itemhorizontal+" "
-        # 绘制牌堆数量
-        if j == DECKCNTHOR:
-            strdeckcnt = str(len(Cards.deck))
-            strcemecnt = str(len(Cards.cemetery))
-            strdeckandcemecnt = "牌组:" + strdeckcnt + "   " + "墓地:" + strcemecnt
-            itemhorizontal = itemhorizontal[:2] + strdeckandcemecnt + itemhorizontal[30:]
-        if j>=len(artboard):
-            artboard.append("")
-        artboard[j]=artboard[j]+" "+itemhorizontal
-    #界面打印
-    for itemhorizontal in artboard:
-        print(itemhorizontal)
-# 主界面绘制
-def PaintingMainWindows(Cards):
-    os.system('cls')
-    PaintingHandCard(Cards)
-    PaintingInfoBar(Cards)
+                        if i == 0 or i == hor - 1:
+                            itemhorizontal=itemhorizontal+"+"
+                        else:
+                            itemhorizontal=itemhorizontal+" "
+                if j >= len(self.artboard):
+                    self.artboard.append("")
+                self.artboard[j] = self.artboard[j] + itemhorizontal
+    #绘制扑克牌花色和点数
+    def PaintingCardPointSuit(self):
+        handcardcnt = len(self.cards.hand)
+        start = SUITPOINTVER - VCARD
+        for i in range(handcardcnt):
+            item_card = self.cards.hand[i]
+            strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
+            start = start + VCARD
+            end = start + len(strsuitpoint)
+            self.artboard[SUITPOINTHOR] = self.artboard[SUITPOINTHOR][:start] + strsuitpoint + self.artboard[SUITPOINTHOR][end:]
+    #打印
+    def Painting(self):
+        for itemhorizontal in self.artboard: 
+            print(itemhorizontal) 
+    #清空画板
+    def CleanBoard(self):
+        self.artboard=[]
+    #文本信息通用绘制
+    def PaintingCommonTXT(self, str, ver, hor):
+        strcnt = len(str.encode('gbk'))
+        self.artboard[hor] = self.artboard[hor][:ver] + str + self.artboard[hor][strcnt+ver:]
+
