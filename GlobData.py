@@ -25,3 +25,17 @@ BASIC_HAND_NUM= 8   # 初始手牌数
 # 排序类型
 SORTFORSUIT = 0
 SORTFORPOINT = 1
+
+### 牌型相关 ###
+PKHADSTR=["高牌","对子","两对","三条","顺子","同花","葫芦","四条","同花顺"]
+PKHADSCO=[[5,1],[10,2],[20,2],[30,3],[30,4],[35,4],[40,4],[60,7],[100,8]]
+HIGH = 0
+PAIR = 1
+TWOP = 2
+THREE = 3
+STRAT = 4
+FLUSH = 5
+FULLHS = 6
+FOUR = 7
+STRATFLUSH = 8
+

@@ -5,7 +5,7 @@
 #
 import GlobData
 import random
-import windows
+import Windows
 
 class Card:
     def __init__(self,point,suit,buff) -> None:
@@ -20,7 +20,7 @@ class Cards:
     roundplayingcardrecord=[]
     win = None
     def __init__(self) -> None:
-        self.win = windows.window(self)
+        self.win = Windows.window(self)
         for item_card in GlobData.BASIC_HAND:
             item = Card(item_card[0],item_card[1], item_card[2])
             self.deck.append(item)
@@ -47,15 +47,15 @@ class Cards:
     def PlayingCards(self, playingcardslist):#出牌
         if len(playingcardslist) > len(self.hand):
             return False
-        roundplayingcardrecord = []
+        self.roundplayingcardrecord = []
         new_hand = []
         for i in range(len(self.hand)):
             if any(x == i for x in playingcardslist):
-                roundplayingcardrecord.append(self.hand[i])
+                self.roundplayingcardrecord.append(self.hand[i])
             else:
                 new_hand.append(self.hand[i])
         self.hand = new_hand
-        self.cemetery.extend(roundplayingcardrecord)
+        self.cemetery.extend(self.roundplayingcardrecord)
         return True
-    def PaintingMainWindows(self):
+    def PaintingMainWindows(self):# 打印界面
             self.win.PaintingMainWindows()

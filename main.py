@@ -5,11 +5,13 @@
 #
 import GlobData
 import CardManage
+import Accounting
 
 if __name__ == "__main__":
     print("小丑牌启动...")
     Cards = CardManage.Cards()
     Cards.Shuffle()
+    act = Accounting.accountant(Cards)
     while True:
         Cards.Licensing()
         Cards.Sorting(GlobData.SORTFORPOINT)
@@ -23,4 +25,6 @@ if __name__ == "__main__":
                 Cards.Sorting(int(arg[1]))
             if button == 'b': #出牌
                 Cards.PlayingCards(list(map(int, arg[1:])))
+                act.ScoreBill()
+
                 playing_card = True
