@@ -7,6 +7,8 @@
 import CardManage
 import Windows
 import Accounting
+import GlobData
+import time
 
 def MainWinLogic():
     PockerCards = CardManage.Cards()
@@ -17,17 +19,11 @@ def MainWinLogic():
     while True:
         PockerCards.Licensing()
         playing_card = False
-        while playing_card == False:
+        while  True:
             MainWin.PaintingMainWindows()
-            print("你的操作>:")
-            arg = input().split()
-            button = arg[0]
-            if button == 'a': #按指定顺序暂时手牌
-                PockerCards.Sorting(int(arg[1]))
-            if button == 'b': #出牌
-                PockerCards.PlayingCards(list(map(int, arg[1:])))
-                Act.ScoreBill()
-                playing_card = True
+            GlobData.REFRESH = False
+            while GlobData.REFRESH == False:
+                time.sleep(0.1) 
 
 
 def ControllerLogic():

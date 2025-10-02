@@ -39,3 +39,7 @@ FULLHS = 6
 FOUR = 7
 STRATFLUSH = 8
 
+### 游戏信息交流变量区 ###
+MOUNSEFOCUS = -1    # 鼠标焦点按钮
+REFRESH = True      # 界面刷新标记
+CHOSENPOCKERLIST = []   # 选中的扑克牌 
