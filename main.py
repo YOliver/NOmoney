@@ -3,28 +3,18 @@
 #   模仿小丑牌项目 
 #   主函数入口
 #
-import GlobData
-import CardManage
-import Accounting
+import threading
+import ThreadingLogic
 
 if __name__ == "__main__":
     print("小丑牌启动...")
-    Cards = CardManage.Cards()
-    Cards.Shuffle()
-    act = Accounting.accountant(Cards)
-    while True:
-        Cards.Licensing()
-        Cards.Sorting(GlobData.SORTFORPOINT)
-        playing_card = False
-        while playing_card == False:
-            Cards.PaintingMainWindows()
-            print("你的操作>:")
-            arg = input().split()
-            button = arg[0]
-            if button == 'a': #按指定顺序暂时手牌
-                Cards.Sorting(int(arg[1]))
-            if button == 'b': #出牌
-                Cards.PlayingCards(list(map(int, arg[1:])))
-                act.ScoreBill()
+    t_game_win = threading.Thread(target=ThreadingLogic.MainWinLogic)
+    t_controller_win = threading.Thread(target=ThreadingLogic.ControllerLogic)
 
-                playing_card = True
+    t_game_win.start()
+    t_controller_win.start()
+
+    t_game_win.join()
+    t_controller_win.join()
+
+    print("游戏结束！！！！")

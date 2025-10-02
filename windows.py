@@ -5,6 +5,8 @@
 #
 import os
 import GlobData
+import tkinter as tk
+import time
 
 ###PockerCard图形数据###
 #长宽
@@ -99,3 +101,27 @@ class window:
     def PaintingJockerTarot(self):
         pass
 
+# 游戏操控界面
+class GameController:
+    def __init__(self) -> None:
+        pass
+    def PaintingController(self):
+        root = tk.Tk()
+        root.title("小丑牌")
+        root.geometry("300x200")
+        # 创建按钮
+        button = tk.Button(root, text="交互按钮", bg="yellow", fg="black")
+        button.pack(pady=50)
+
+        # 绑定鼠标事件
+        button.bind("<Enter>", self.EnterLogic)    # 鼠标进入事件[7](@ref)[8](@ref)
+        button.bind("<Leave>", self.LeaveLogic)    # 鼠标离开事件[7](@ref)[8](@ref)
+        button.bind("<Button-1>", self.ClickLogic) # 鼠标左键点击事件[6](@ref)[8](@ref)
+
+        root.mainloop()
+    def EnterLogic(self,event):
+        print("接触")
+    def LeaveLogic(self,event):
+        print("离开")
+    def ClickLogic(self,event):
+        print("点击")

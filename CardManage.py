@@ -18,9 +18,7 @@ class Cards:
     cemetery=[]
     hand=[]
     roundplayingcardrecord=[]
-    win = None
     def __init__(self) -> None:
-        self.win = Windows.window(self)
         for item_card in GlobData.BASIC_HAND:
             item = Card(item_card[0],item_card[1], item_card[2])
             self.deck.append(item)
@@ -57,5 +55,3 @@ class Cards:
         self.hand = new_hand
         self.cemetery.extend(self.roundplayingcardrecord)
         return True
-    def PaintingMainWindows(self):# 打印界面
-            self.win.PaintingMainWindows()
