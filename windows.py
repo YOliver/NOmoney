@@ -132,7 +132,7 @@ class GameController:
     def PaintingController(self):
         root = tk.Tk()
         root.title("小丑牌")
-        root.geometry("600x400")
+        root.geometry("1000x400")
         # 创建pocker牌按钮
         for i in range(8):
             button = tk.Button(root, text=str(i), width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
@@ -143,8 +143,17 @@ class GameController:
             button.bind("<Button-1>", lambda event: self.ClickLogic(event,i)) # 鼠标左键点击事件[6](@ref)[8](@ref)
         # 创建出牌按钮
         button = tk.Button(root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
-        button.grid(row=2, column=1)
+        button.grid(row=2, column=0)
         button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_PLAYCARD))
+        # 创建弃牌按钮
+
+        # 创建花色/点数排序按钮
+        button = tk.Button(root, text="花色", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button.grid(row=2, column=2)
+        button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_SORT_SUIT))
+        button = tk.Button(root, text="点数", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button.grid(row=2, column=3)
+        button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_SORT_POINT))
 
         root.mainloop()
     def EnterLogic(self,event): # 鼠标接触按钮
@@ -165,3 +174,7 @@ class GameController:
                 self.PockerCards.roundplayingcardrecord.remove(ichosen)
         if btnum == GlobData.COMMOND_PLAYCARD: # 出牌
             GlobData.COMMOND_PLAYCARD_SINGAL = True
+        if btnum == GlobData.COMMOND_SORT_POINT or GlobData.COMMOND_SORT_SUIT: # 排序
+            self.PockerCards.sort_type = btnum
+            GlobData.COMMOND_SORT_SINGAL = True
+

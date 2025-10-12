@@ -14,11 +14,12 @@ class Card:
         self.buff = buff
 
 class Cards:
-    deck = []
-    cemetery=[]
-    hand=[]
-    roundplayingcardrecord=[]
-    focuscard = -1
+    deck = []   # 牌堆
+    cemetery=[] # 墓地
+    hand=[]     # 手牌
+    roundplayingcardrecord=[]   # 出牌区
+    focuscard = -1  # 鼠标焦点牌
+    sort_type = GlobData.COMMOND_SORT_POINT # 排序方式
     def __init__(self) -> None:
         for item_card in GlobData.BASIC_HAND:
             item = Card(item_card[0],item_card[1], item_card[2])
@@ -38,20 +39,15 @@ class Cards:
         for i in range(GlobData.BASIC_HAND_NUM - cnthand):
             item_card = self.deck.pop()
             self.hand.append(item_card)
-    def Sorting(self, sorttype):#排序
-        if sorttype == GlobData.SORTFORPOINT:
+    def Sorting(self):#排序
+        if self.sort_type == GlobData.COMMOND_SORT_POINT:
             self.hand = sorted(self.hand, key=lambda x: (x.point, x.suit))
-        if sorttype == GlobData.SORTFORSUIT:
+        if self.sort_type == GlobData.COMMOND_SORT_SUIT:
             self.hand = sorted(self.hand, key=lambda x: (x.suit,x.point))
-    def PlayingCards(self, playingcardslist):#出牌
-        if len(playingcardslist) > len(self.hand):
-            return False
-        self.roundplayingcardrecord = []
+    def PlayingCards(self):#出牌
         new_hand = []
         for i in range(len(self.hand)):
-            if any(x == i for x in playingcardslist):
-                self.roundplayingcardrecord.append(self.hand[i])
-            else:
+            if i not in self.roundplayingcardrecord:
                 new_hand.append(self.hand[i])
         self.hand = new_hand
         self.cemetery.extend(self.roundplayingcardrecord)

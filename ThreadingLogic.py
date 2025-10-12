@@ -21,6 +21,10 @@ def MainWinLogic(PockerClass, AcctountorClass):
                 PockerCards.PlayingCards()
                 print(Acctountor.ScoreBill())
                 GlobData.COMMOND_PLAYCARD_SINGAL = False
+            if GlobData.COMMOND_SORT_SINGAL == True:
+                GlobData.COMMOND_SORT_SINGAL = False
+                PockerCards.Sorting()
+
             MainWin.PaintingMainWindows()
             GlobData.COMMOND_REFRESH_SINGAL = False
             while GlobData.COMMOND_REFRESH_SINGAL == False:

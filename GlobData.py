@@ -22,9 +22,6 @@ BASIC_HAND =[
 
 # 基础数据
 BASIC_HAND_NUM= 8   # 初始手牌数
-# 排序类型
-SORTFORSUIT = 0
-SORTFORPOINT = 1
 
 ### 牌型相关 ###
 PKHADSTR=["高牌","对子","两对","三条","顺子","同花","葫芦","四条","同花顺"]
@@ -41,8 +38,11 @@ STRATFLUSH = 8
 
 ### 按钮信息编号 ###
 #0-1000 出牌的牌编号
-COMMOND_PLAYCARD = 1000    # 出牌动作
-COMMOND_PLAYCARD_SINGAL = False     # 出牌信号
-COMMOND_REFRESH_SINGAL  = True  # 界面刷新信号
+COMMOND_PLAYCARD = 1000     # 出牌动作
+COMMOND_SORT_SUIT = 1100    # 花色排序
+COMMOND_SORT_POINT = 1101   # 点数排序
 
+COMMOND_PLAYCARD_SINGAL = False # 出牌信号
+COMMOND_REFRESH_SINGAL  = False # 界面刷新信号
+COMMOND_SORT_SINGAL     = False # 界面刷新
 ### 游戏信息交流变量区 ###
