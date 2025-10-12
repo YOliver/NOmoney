@@ -132,12 +132,16 @@ class GameController:
         root.geometry("600x400")
         # 创建pocker牌按钮
         for i in range(8):
-            button = tk.Button(root, text=str(i), bg="yellow", fg="black",activebackground='#45a049')
+            button = tk.Button(root, text=str(i), width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
             button.grid(row=1,column=i, padx=10, pady=10, ipadx=5, ipady=5, sticky="nsew")            
             # 绑定鼠标事件
             button.bind("<Enter>", self.EnterLogic)    # 鼠标进入事件[7](@ref)[8](@ref)
             button.bind("<Leave>", self.LeaveLogic)    # 鼠标离开事件[7](@ref)[8](@ref)
-            button.bind("<Button-1>", self.ClickLogic) # 鼠标左键点击事件[6](@ref)[8](@ref)
+            button.bind("<Button-1>", lambda event: self.ClickLogic(event,i)) # 鼠标左键点击事件[6](@ref)[8](@ref)
+        # 创建出牌按钮
+        button = tk.Button(root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button.grid(row=2, column=1)
+        button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.BTPLAYCARD))
 
         root.mainloop()
     def EnterLogic(self,event): # 鼠标接触按钮
@@ -146,11 +150,15 @@ class GameController:
     def LeaveLogic(self,event): # 鼠标离开按钮
         GlobData.MOUNSEFOCUS = -1
         GlobData.REFRESH = True
-    def ClickLogic(self,event): # 鼠标点击按钮
-        chosencardslength = len(GlobData.CHOSENPOCKERLIST)
-        ichosen = int(event.widget['text'])
-        if ichosen not in GlobData.CHOSENPOCKERLIST:
-            if chosencardslength < 5:
-                GlobData.CHOSENPOCKERLIST.append(ichosen)
-        else:
-            GlobData.CHOSENPOCKERLIST.remove(ichosen)
+    def ClickLogic(self,event, btnum): # 鼠标点击按钮
+        if btnum < 100:
+            chosencardslength = len(GlobData.CHOSENPOCKERLIST)
+            ichosen = int(event.widget['text'])
+            if ichosen not in GlobData.CHOSENPOCKERLIST:
+                if chosencardslength < 5:
+                    GlobData.CHOSENPOCKERLIST.append(ichosen)
+            else:
+                GlobData.CHOSENPOCKERLIST.remove(ichosen)
+        if btnum == GlobData.BTPLAYCARD: # 出牌
+            GlobData.REFRESH = True
+            GlobData.PLAYINGCARD = True

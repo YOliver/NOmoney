@@ -18,8 +18,11 @@ def MainWinLogic():
     PockerCards.Shuffle()
     while True:
         PockerCards.Licensing()
-        playing_card = False
-        while  True:
+        while True:
+            if GlobData.PLAYINGCARD == True:
+                PockerCards.PlayingCards()
+                print(Act.ScoreBill())
+                GlobData.PLAYINGCARD = False
             MainWin.PaintingMainWindows()
             GlobData.REFRESH = False
             while GlobData.REFRESH == False:
