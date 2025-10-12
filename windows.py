@@ -107,25 +107,28 @@ class window:
             strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
             xstart = xstart + YLONG
             self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
-        # 鼠标焦点牌/选中牌向上弹出
+        # 鼠标选中牌向上弹出,焦点牌上边加粗
         up_leng = YLONG // 2
-        up_display_card_list = GlobData.CHOSENPOCKERLIST
-        if GlobData.MOUNSEFOCUS not in GlobData.CHOSENPOCKERLIST:
-            up_display_card_list = GlobData.CHOSENPOCKERLIST + [GlobData.MOUNSEFOCUS]
-        for ichosen in up_display_card_list:
-            if ichosen < 0:
-                continue
-            for j in range(YLONG):#把选中的牌挑选出来,向上显示
+        for ichosen in self.cards.roundplayingcardrecord: # 选中牌
+            for j in range(YLONG):
                 ypos = len(self.artboard)-YLONG+j
                 xpos = XLONG*ichosen
                 ynewpos = ypos-up_leng
                 self.artboard[ynewpos] = self.artboard[ynewpos][:xpos] + self.artboard[ypos][xpos:xpos+XLONG] + self.artboard[ynewpos][xpos+XLONG:]
                 self.artboard[ypos] = self.artboard[ypos][:xpos] + " "*XLONG + self.artboard[ypos][xpos+XLONG:]
-        
+        if self.cards.focuscard > -1:   # 鼠标焦点牌
+            ypos = len(self.artboard)-YLONG-1
+            if self.cards.focuscard in self.cards.roundplayingcardrecord:
+                ypos = ypos-up_leng
+            xpos = XLONG*self.cards.focuscard
+            self.artboard[ypos] = self.artboard[ypos][:xpos] + "+"*XLONG + self.artboard[ypos][xpos+XLONG:]
+
+
 # 游戏操控界面
 class GameController:
-    def __init__(self) -> None:
-        pass
+    PockerCards = None
+    def __init__(self, Pocker) -> None:
+        self.PockerCards = Pocker
     def PaintingController(self):
         root = tk.Tk()
         root.title("小丑牌")
@@ -141,24 +144,24 @@ class GameController:
         # 创建出牌按钮
         button = tk.Button(root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=1)
-        button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.BTPLAYCARD))
+        button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_PLAYCARD))
 
         root.mainloop()
     def EnterLogic(self,event): # 鼠标接触按钮
-        GlobData.MOUNSEFOCUS = int(event.widget['text'])
-        GlobData.REFRESH = True
+        self.PockerCards.focuscard = int(event.widget['text'])
+        GlobData.COMMOND_REFRESH_SINGAL = True
     def LeaveLogic(self,event): # 鼠标离开按钮
-        GlobData.MOUNSEFOCUS = -1
-        GlobData.REFRESH = True
+        self.PockerCards.focuscard = -1
+        GlobData.COMMOND_REFRESH_SINGAL = True
     def ClickLogic(self,event, btnum): # 鼠标点击按钮
-        if btnum < 100:
-            chosencardslength = len(GlobData.CHOSENPOCKERLIST)
+        GlobData.COMMOND_REFRESH_SINGAL = True
+        if btnum < GlobData.COMMOND_PLAYCARD:   # 选中扑克牌
+            chosencardslength = len(self.PockerCards.roundplayingcardrecord)
             ichosen = int(event.widget['text'])
-            if ichosen not in GlobData.CHOSENPOCKERLIST:
+            if ichosen not in self.PockerCards.roundplayingcardrecord:
                 if chosencardslength < 5:
-                    GlobData.CHOSENPOCKERLIST.append(ichosen)
+                    self.PockerCards.roundplayingcardrecord.append(ichosen)
             else:
-                GlobData.CHOSENPOCKERLIST.remove(ichosen)
-        if btnum == GlobData.BTPLAYCARD: # 出牌
-            GlobData.REFRESH = True
-            GlobData.PLAYINGCARD = True
+                self.PockerCards.roundplayingcardrecord.remove(ichosen)
+        if btnum == GlobData.COMMOND_PLAYCARD: # 出牌
+            GlobData.COMMOND_PLAYCARD_SINGAL = True

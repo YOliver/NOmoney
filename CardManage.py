@@ -18,6 +18,7 @@ class Cards:
     cemetery=[]
     hand=[]
     roundplayingcardrecord=[]
+    focuscard = -1
     def __init__(self) -> None:
         for item_card in GlobData.BASIC_HAND:
             item = Card(item_card[0],item_card[1], item_card[2])

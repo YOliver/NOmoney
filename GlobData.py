@@ -40,11 +40,9 @@ FOUR = 7
 STRATFLUSH = 8
 
 ### 按钮信息编号 ###
-#0-100 出牌的牌编号
-BTPLAYCARD = 100    # 出牌
+#0-1000 出牌的牌编号
+COMMOND_PLAYCARD = 1000    # 出牌动作
+COMMOND_PLAYCARD_SINGAL = False     # 出牌信号
+COMMOND_REFRESH_SINGAL  = True  # 界面刷新信号
 
 ### 游戏信息交流变量区 ###
-MOUNSEFOCUS = -1    # 鼠标焦点按钮
-REFRESH = True      # 界面刷新标记
-CHOSENPOCKERLIST = []   # 选中的扑克牌 
-PLAYINGCARD = False # 出牌

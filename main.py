@@ -5,11 +5,15 @@
 #
 import threading
 import ThreadingLogic
+import Accounting
+import CardManage
 
 if __name__ == "__main__":
     print("小丑牌启动...")
-    t_game_win = threading.Thread(target=ThreadingLogic.MainWinLogic)
-    t_controller_win = threading.Thread(target=ThreadingLogic.ControllerLogic)
+    Pocker = CardManage.Cards()
+    Acctountor = Accounting.accountant(Pocker)
+    t_game_win = threading.Thread(target=ThreadingLogic.MainWinLogic, args=(Pocker, Acctountor))
+    t_controller_win = threading.Thread(target=ThreadingLogic.ControllerLogic, args=(Pocker, Acctountor))
 
     t_game_win.start()
     t_controller_win.start()
