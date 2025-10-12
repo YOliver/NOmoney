@@ -8,10 +8,11 @@ import random
 import Windows
 
 class Card:
-    def __init__(self,point,suit,buff) -> None:
+    def __init__(self,point,suit,buff,number) -> None:
         self.point = point
         self.suit = suit
         self.buff = buff
+        self.no = number
 
 class Cards:
     deck = []   # 牌堆
@@ -22,7 +23,7 @@ class Cards:
     sort_type = GlobData.COMMOND_SORT_POINT # 排序方式
     def __init__(self) -> None:
         for item_card in GlobData.BASIC_HAND:
-            item = Card(item_card[0],item_card[1], item_card[2])
+            item = Card(item_card[0],item_card[1], item_card[2], len(self.deck))
             self.deck.append(item)
     def ShowDeck(self):#打印牌堆
         for card in self.deck:
@@ -39,6 +40,7 @@ class Cards:
         for i in range(GlobData.BASIC_HAND_NUM - cnthand):
             item_card = self.deck.pop()
             self.hand.append(item_card)
+        self.Sorting()
     def Sorting(self):#排序
         if self.sort_type == GlobData.COMMOND_SORT_POINT:
             self.hand = sorted(self.hand, key=lambda x: (x.point, x.suit))
