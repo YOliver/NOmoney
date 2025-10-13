@@ -14,11 +14,15 @@ if __name__ == "__main__":
     Acctountor = Accounting.accountant(Pocker)
     t_game_win = threading.Thread(target=ThreadingLogic.MainWinLogic, args=(Pocker, Acctountor))
     t_controller_win = threading.Thread(target=ThreadingLogic.ControllerLogic, args=(Pocker, Acctountor))
+    t_log = threading.Thread(target=ThreadingLogic.Log, args=(Pocker, Acctountor))
 
     t_game_win.start()
     t_controller_win.start()
+    t_log.start()
 
     t_game_win.join()
     t_controller_win.join()
+    t_log.join()
 
+    
     print("游戏结束！！！！")

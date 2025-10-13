@@ -7,6 +7,7 @@
 import Windows
 import GlobData
 import time
+import log
 
 def MainWinLogic(PockerClass, AcctountorClass):
     PockerCards = PockerClass
@@ -28,9 +29,11 @@ def MainWinLogic(PockerClass, AcctountorClass):
             MainWin.PaintingMainWindows()
             GlobData.COMMOND_REFRESH_SINGAL = False
             while GlobData.COMMOND_REFRESH_SINGAL == False:
-                time.sleep(0.1) 
-
+                time.sleep(0.1)
 
 def ControllerLogic(PockerClass, AcctountorClass):
     Controller = Windows.GameController(PockerClass)
     Controller.PaintingController()
+
+def Log(PockerClass, AcctountorClass):
+    log.log_secretary()
