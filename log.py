@@ -20,6 +20,7 @@ def log_secretary():
                 formatted_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
                 for item in __private_txt_cache__:
                     log_file.write(formatted_time + " DEBUG " + item + "\n")
+                __private_txt_cache__ = []
                 __cache_lock__ = False # 写完日志，解锁
             if hour != time.localtime().tm_hour:
                 log_file.close()
