@@ -5,7 +5,8 @@
 #
 import GlobData
 import random
-import Windows
+import time
+import log
 
 class Card:
     def __init__(self,point,suit,buff,number) -> None:
@@ -18,13 +19,19 @@ class Cards:
     deck = []   # 牌堆
     cemetery=[] # 墓地
     hand=[]     # 手牌
-    roundplayingcardrecord=[]   # 出牌区
+    roundplayingcardrecord=[]   # 出牌区 *牌编号
     focuscard = -1  # 鼠标焦点牌
     sort_type = GlobData.COMMOND_SORT_POINT # 排序方式
+    serial_factory = -1  #编号工厂
     def __init__(self) -> None:
         for item_card in GlobData.BASIC_HAND:
-            item = Card(item_card[0],item_card[1], item_card[2], len(self.deck))
+            num = self.serial_product()
+            item = Card(item_card[0],item_card[1], item_card[2], num)
             self.deck.append(item)
+            log.LoggerDebug(["生成牌堆：", item.no, item.point, item.suit])
+    def serial_product(self):   # 生成牌的唯一编号
+        self.serial_factory += 1
+        return self.serial_factory
     def ShowDeck(self):#打印牌堆
         for card in self.deck:
             print(GlobData.POINT[card.point],GlobData.SUIT[card.suit],card.buff)
