@@ -7,6 +7,7 @@ import os
 import GlobData
 import tkinter as tk
 import time
+import log
 
 ###PockerCard图形数据###
 #长宽
@@ -109,19 +110,21 @@ class window:
             self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
         # 鼠标选中牌向上弹出,焦点牌上边加粗
         up_leng = YLONG // 2
-        for ichosen in self.cards.roundplayingcardrecord: # 选中牌
-            for j in range(YLONG):
-                ypos = len(self.artboard)-YLONG+j
-                xpos = XLONG*ichosen
-                ynewpos = ypos-up_leng
-                self.artboard[ynewpos] = self.artboard[ynewpos][:xpos] + self.artboard[ypos][xpos:xpos+XLONG] + self.artboard[ynewpos][xpos+XLONG:]
-                self.artboard[ypos] = self.artboard[ypos][:xpos] + " "*XLONG + self.artboard[ypos][xpos+XLONG:]
-        if self.cards.focuscard > -1:   # 鼠标焦点牌
-            ypos = len(self.artboard)-YLONG-1
-            if self.cards.focuscard in self.cards.roundplayingcardrecord:
-                ypos = ypos-up_leng
-            xpos = XLONG*self.cards.focuscard
-            self.artboard[ypos] = self.artboard[ypos][:xpos] + "+"*XLONG + self.artboard[ypos][xpos+XLONG:]
+        for i in range(handcardcnt):
+            item_card = self.cards.hand[i]
+            if item_card.no in self.cards.roundplayingcardrecord: # 选中牌
+                for j in range(YLONG):
+                    ypos = len(self.artboard)-YLONG+j
+                    xpos = XLONG*i
+                    ynewpos = ypos-up_leng
+                    self.artboard[ynewpos] = self.artboard[ynewpos][:xpos] + self.artboard[ypos][xpos:xpos+XLONG] + self.artboard[ynewpos][xpos+XLONG:]
+                    self.artboard[ypos] = self.artboard[ypos][:xpos] + " "*XLONG + self.artboard[ypos][xpos+XLONG:]
+            if item_card.no == self.cards.focuscard:    # 鼠标焦点牌
+                ypos = len(self.artboard)-YLONG-1
+                if self.cards.focuscard in self.cards.roundplayingcardrecord:
+                    ypos = ypos-up_leng
+                xpos = XLONG*i
+                self.artboard[ypos] = self.artboard[ypos][:xpos] + "+"*XLONG + self.artboard[ypos][xpos+XLONG:]
 
 
 # 游戏操控界面
@@ -134,13 +137,16 @@ class GameController:
         root.title("小丑牌")
         root.geometry("1000x400")
         # 创建pocker牌按钮
-        for i in range(8):
-            button = tk.Button(root, text=str(i), width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
+        for i in range(len(self.PockerCards.hand)):
+            point_num = self.PockerCards.hand[i].point
+            button = tk.Button(root, text=GlobData.POINT[point_num], width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
             button.grid(row=1,column=i, padx=10, pady=10, ipadx=5, ipady=5, sticky="nsew")            
             # 绑定鼠标事件
-            button.bind("<Enter>", self.EnterLogic)    # 鼠标进入事件[7](@ref)[8](@ref)
-            button.bind("<Leave>", self.LeaveLogic)    # 鼠标离开事件[7](@ref)[8](@ref)
-            button.bind("<Button-1>", lambda event: self.ClickLogic(event,i)) # 鼠标左键点击事件[6](@ref)[8](@ref)
+            pocker_number = self.PockerCards.hand[i].no
+            log.LoggerDebug(["按钮扑克绑定", i, pocker_number, self.PockerCards.hand[i].point])
+            button.bind("<Enter>", lambda event, num = pocker_number: self.EnterLogic(event, num))     # 鼠标进入事件[7](@ref)[8](@ref)
+            button.bind("<Leave>", lambda event, num = pocker_number: self.LeaveLogic(event, num))     # 鼠标离开事件[7](@ref)[8](@ref)
+            button.bind("<Button-1>", lambda event, num = pocker_number: self.ClickLogic(event,num))   # 鼠标左键点击事件[6](@ref)[8](@ref)
         # 创建出牌按钮
         button = tk.Button(root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=0)
@@ -156,17 +162,18 @@ class GameController:
         button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_SORT_POINT))
 
         root.mainloop()
-    def EnterLogic(self,event): # 鼠标接触按钮
-        self.PockerCards.focuscard = int(event.widget['text'])
+    def EnterLogic(self,event, btnum): # 鼠标接触按钮
+        log.LoggerDebug(["鼠标聚焦按钮：",btnum])
+        self.PockerCards.focuscard = btnum
         GlobData.COMMOND_REFRESH_SINGAL = True
-    def LeaveLogic(self,event): # 鼠标离开按钮
+    def LeaveLogic(self,event, btnum): # 鼠标离开按钮
         self.PockerCards.focuscard = -1
         GlobData.COMMOND_REFRESH_SINGAL = True
     def ClickLogic(self,event, btnum): # 鼠标点击按钮
         GlobData.COMMOND_REFRESH_SINGAL = True
         if btnum < GlobData.COMMOND_PLAYCARD:   # 选中扑克牌
             chosencardslength = len(self.PockerCards.roundplayingcardrecord)
-            ichosen = int(event.widget['text'])
+            ichosen = btnum
             if ichosen not in self.PockerCards.roundplayingcardrecord:
                 if chosencardslength < 5:
                     self.PockerCards.roundplayingcardrecord.append(ichosen)
