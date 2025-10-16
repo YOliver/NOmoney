@@ -132,36 +132,48 @@ class GameController:
     PockerCards = None
     def __init__(self, Pocker) -> None:
         self.PockerCards = Pocker
+        self.PockerButton = []
+        self.root = tk.Tk()
+        self.root.title("尹建文的小丑牌")
+        self.root.geometry("1000x400")
     def PaintingController(self):
-        root = tk.Tk()
-        root.title("小丑牌")
-        root.geometry("1000x400")
         # 创建pocker牌按钮
-        for i in range(len(self.PockerCards.hand)):
-            point_num = self.PockerCards.hand[i].point
-            button = tk.Button(root, text=GlobData.POINT[point_num], width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
-            button.grid(row=1,column=i, padx=10, pady=10, ipadx=5, ipady=5, sticky="nsew")            
-            # 绑定鼠标事件
-            pocker_number = self.PockerCards.hand[i].no
-            log.LoggerDebug(["按钮扑克绑定", i, pocker_number, self.PockerCards.hand[i].point])
-            button.bind("<Enter>", lambda event, num = pocker_number: self.EnterLogic(event, num))     # 鼠标进入事件[7](@ref)[8](@ref)
-            button.bind("<Leave>", lambda event, num = pocker_number: self.LeaveLogic(event, num))     # 鼠标离开事件[7](@ref)[8](@ref)
-            button.bind("<Button-1>", lambda event, num = pocker_number: self.ClickLogic(event,num))   # 鼠标左键点击事件[6](@ref)[8](@ref)
+        self.create_dynamic_pocker_button()
         # 创建出牌按钮
-        button = tk.Button(root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button = tk.Button(self.root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=0)
         button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_PLAYCARD))
         # 创建弃牌按钮
 
         # 创建花色/点数排序按钮
-        button = tk.Button(root, text="花色", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button = tk.Button(self.root, text="花色", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=2)
         button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_SORT_SUIT))
-        button = tk.Button(root, text="点数", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button = tk.Button(self.root, text="点数", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=3)
         button.bind("<Button-1>", lambda event: self.ClickLogic(event,GlobData.COMMOND_SORT_POINT))
 
-        root.mainloop()
+        self.root.mainloop()
+    def create_dynamic_pocker_button(self):
+        # 清理旧数据
+        for button in self.PockerButton:
+            button.destroy()
+        self.PockerButton.clear()
+        # 生成新按钮
+        button_col = 0
+        for card in self.PockerCards.hand:
+            point_str = GlobData.POINT[card.point]+GlobData.SUIT[card.suit]
+            button = tk.Button(self.root, text=point_str, width=10, height=5, bg="yellow", fg="black",activebackground='#45a049')
+            button.grid(row=1,column=button_col, padx=10, pady=10, ipadx=5, ipady=5, sticky="nsew")   
+            # 绑定鼠标事件
+            pocker_number = card.no
+            log.LoggerDebug(["按钮扑克绑定", pocker_number, point_str])
+            button.bind("<Enter>", lambda event, num = pocker_number: self.EnterLogic(event, num))     # 鼠标进入事件[7](@ref)[8](@ref)
+            button.bind("<Leave>", lambda event, num = pocker_number: self.LeaveLogic(event, num))     # 鼠标离开事件[7](@ref)[8](@ref)
+            button.bind("<Button-1>", lambda event, num = pocker_number: self.ClickLogic(event,num))   # 鼠标左键点击事件[6](@ref)[8](@ref)
+
+            self.PockerButton.append(button)
+            button_col += 1   
     def EnterLogic(self,event, btnum): # 鼠标接触按钮
         log.LoggerDebug(["鼠标聚焦按钮：",btnum])
         self.PockerCards.focuscard = btnum
