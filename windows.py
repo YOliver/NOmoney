@@ -184,19 +184,20 @@ class GameController:
             button_col += 1   
     def EnterLogic(self,event, btnum): # 鼠标接触按钮
         log.LoggerDebug(["鼠标聚焦按钮：",btnum])
-        self.Handler.push(self.MainWin.PaintingMainWindows)
         self.Handler.push(self.PockerCards.MouseFocusOn,btnum)
-    def LeaveLogic(self,event, btnum): # 鼠标离开按钮
         self.Handler.push(self.MainWin.PaintingMainWindows)
+    def LeaveLogic(self,event, btnum): # 鼠标离开按钮
         self.Handler.push(self.PockerCards.MouseFocusOff)
+        self.Handler.push(self.MainWin.PaintingMainWindows)
     def PockerClickLogic(self,event, args): # 鼠标点击pocker按钮
         log.LoggerDebug(["点击选中牌", args])
-        self.Handler.push(self.MainWin.PaintingMainWindows)
         self.Handler.push(self.PockerCards.ClickPocker, args)
+        self.Handler.push(self.MainWin.PaintingMainWindows)
     def PlayButtonClickLogic(self, event): # 点击出牌
         self.Handler.push(self.PockerCards.PlayingCards)
     def SortButtonClickLogic(self, event, args):
-        self.Handler.push(self.create_dynamic_pocker_button)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
-        self.Handler.push(self.PockerCards.Sorting)
         self.Handler.push(self.PockerCards.SortTypeSet, args)
+        self.Handler.push(self.PockerCards.Sorting)
+        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.create_dynamic_pocker_button)
+

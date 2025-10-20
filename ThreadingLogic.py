@@ -10,12 +10,11 @@ import time
 import log
 
 def MainWinLogic(PockerClass, AcctountorClass, HandlerClass, MainWinClass):
-    HandlerClass.push(MainWinClass.PaintingMainWindows)
-    HandlerClass.push(PockerClass.Licensing)
     HandlerClass.push(PockerClass.Shuffle)
+    HandlerClass.push(PockerClass.Licensing)
+    HandlerClass.push(MainWinClass.PaintingMainWindows)
     while True:
-        if not HandlerClass.is_empty():
-            HandlerClass.exe_next()
+        HandlerClass.exe_all()
         time.sleep(0.1)
 
 def ControllerLogic(PockerClass, AcctountorClass, HandlerClass, MainWinClass):
