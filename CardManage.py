@@ -21,7 +21,7 @@ class Cards:
     hand=[]     # 手牌
     roundplayingcardrecord=[]   # 出牌区 *牌编号
     focuscard = -1  # 鼠标焦点牌
-    sort_type = GlobData.COMMOND_SORT_POINT # 排序方式
+    sort_type = GlobData.COMMAND_SORT_BY_POINT_SIGNAL # 排序方式
     serial_factory = -1  #编号工厂
     def __init__(self) -> None:
         for item_card in GlobData.BASIC_HAND:
@@ -48,10 +48,12 @@ class Cards:
             item_card = self.deck.pop()
             self.hand.append(item_card)
         self.Sorting()
+    def SortTypeSet(self, type):
+        self.sort_type = type
     def Sorting(self):#排序
-        if self.sort_type == GlobData.COMMOND_SORT_POINT:
+        if self.sort_type == GlobData.COMMAND_SORT_BY_POINT_SIGNAL:
             self.hand = sorted(self.hand, key=lambda x: (x.point, x.suit))
-        if self.sort_type == GlobData.COMMOND_SORT_SUIT:
+        if self.sort_type == GlobData.COMMAND_SORT_BY_SUIT_SIGNAL:
             self.hand = sorted(self.hand, key=lambda x: (x.suit,x.point))
     def PlayingCards(self):#出牌
         new_hand = []
@@ -61,3 +63,14 @@ class Cards:
         self.hand = new_hand
         self.cemetery.extend(self.roundplayingcardrecord)
         return True
+    def MouseFocusOn(self, pockerno):# 鼠标焦点选中
+        self.focuscard = pockerno
+    def MouseFocusOff(self):# 鼠标焦点离开
+        self.focuscard = -1
+    def ClickPocker(self, pockerno): # 鼠标点击扑克牌
+        pocker = pockerno
+        if pocker not in self.roundplayingcardrecord:
+            if len(self.roundplayingcardrecord) < 5:
+                self.roundplayingcardrecord.append(pocker)
+        else:
+            self.roundplayingcardrecord.remove(pocker)

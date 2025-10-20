@@ -9,30 +9,18 @@ import GlobData
 import time
 import log
 
-def MainWinLogic(PockerClass, AcctountorClass):
-    PockerCards = PockerClass
-    Acctountor = AcctountorClass
-    MainWin = Windows.window(PockerCards)
-
-    PockerCards.Shuffle()
+def MainWinLogic(PockerClass, AcctountorClass, HandlerClass, MainWinClass):
+    HandlerClass.push(MainWinClass.PaintingMainWindows)
+    HandlerClass.push(PockerClass.Licensing)
+    HandlerClass.push(PockerClass.Shuffle)
     while True:
-        PockerCards.Licensing()
-        while True:
-            if GlobData.COMMOND_PLAYCARD_SINGAL == True:
-                PockerCards.PlayingCards()
-                print(Acctountor.ScoreBill())
-                GlobData.COMMOND_PLAYCARD_SINGAL = False
-            if GlobData.COMMOND_SORT_SINGAL == True:
-                GlobData.COMMOND_SORT_SINGAL = False
-                PockerCards.Sorting()
+        if not HandlerClass.is_empty():
+            HandlerClass.exe_next()
+        time.sleep(0.1)
 
-            MainWin.PaintingMainWindows()
-            GlobData.COMMOND_REFRESH_SINGAL = False
-            while GlobData.COMMOND_REFRESH_SINGAL == False:
-                time.sleep(0.1)
-
-def ControllerLogic(PockerClass, AcctountorClass):
-    Controller = Windows.GameController(PockerClass)
+def ControllerLogic(PockerClass, AcctountorClass, HandlerClass, MainWinClass):
+    time.sleep(0.5)
+    Controller = Windows.GameController(PockerClass, HandlerClass, MainWinClass)
     Controller.PaintingController()
 
 def Log(PockerClass, AcctountorClass):
