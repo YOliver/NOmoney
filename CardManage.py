@@ -19,7 +19,8 @@ class Cards:
     deck = []   # 牌堆
     cemetery=[] # 墓地
     hand=[]     # 手牌
-    roundplayingcardrecord=[]   # 出牌区 *牌编号
+    roundplayingcardrecord= []  # 出牌区 pocker class
+    roundplayingcardcache = []  # 出牌缓存区 编号
     focuscard = -1  # 鼠标焦点牌
     sort_type = GlobData.COMMAND_SORT_BY_POINT_SIGNAL # 排序方式
     serial_factory = -1  #编号工厂
@@ -55,22 +56,26 @@ class Cards:
             self.hand = sorted(self.hand, key=lambda x: (x.point, x.suit))
         if self.sort_type == GlobData.COMMAND_SORT_BY_SUIT_SIGNAL:
             self.hand = sorted(self.hand, key=lambda x: (x.suit,x.point))
-    def PlayingCards(self):#出牌
-        new_hand = []
-        for i in range(len(self.hand)):
-            if i not in self.roundplayingcardrecord:
-                new_hand.append(self.hand[i])
-        self.hand = new_hand
-        self.cemetery.extend(self.roundplayingcardrecord)
-        return True
     def MouseFocusOn(self, pockerno):# 鼠标焦点选中
         self.focuscard = pockerno
     def MouseFocusOff(self):# 鼠标焦点离开
         self.focuscard = -1
     def ClickPocker(self, pockerno): # 鼠标点击扑克牌
-        pocker = pockerno
-        if pocker not in self.roundplayingcardrecord:
-            if len(self.roundplayingcardrecord) < 5:
-                self.roundplayingcardrecord.append(pocker)
+        if pockerno not in self.roundplayingcardcache:
+            if len(self.roundplayingcardcache) < 5:
+                self.roundplayingcardcache.append(pockerno)
         else:
-            self.roundplayingcardrecord.remove(pocker)
+            self.roundplayingcardcache.remove(pockerno)
+    def LaunchCards(self): # 发射卡片
+        hand_buffer = []
+        for item_card in self.hand:
+            pockerno = item_card.no
+            if pockerno in self.roundplayingcardcache:
+                self.roundplayingcardrecord.append(item_card)
+            else:
+                hand_buffer.append(item_card)
+        self.hand = hand_buffer
+        self.roundplayingcardcache = []
+    def PlaceInCemetery(self):#将牌放入墓地
+        self.cemetery.extend(self.roundplayingcardrecord)
+        self.roundplayingcardrecord = []

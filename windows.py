@@ -67,6 +67,7 @@ class window:
                     BoardThisTime.append("")
                 BoardThisTime[j] = BoardThisTime[j] + itemhorizontal
         self.artboard.extend(BoardThisTime)
+        return len(self.artboard)
     #打印
     def Painting(self):
         for itemhorizontal in self.artboard: 
@@ -98,24 +99,38 @@ class window:
         self.PaintingCardsFrame(5, YLONG, XLONG, "+", " ")
     #出牌区绘制
     def PaintingTableErea(self):
-        self.PaintingCardsFrame(1, YTABLELONG, XTABLELONG, " ", " ")
+        self.PaintingCardsFrame(1, 1, XLONG*len(self.cards.hand), " ", " ")
+        playcardcnt = len(self.cards.roundplayingcardrecord)
+        if playcardcnt > 0:
+            self.PaintingCardsFrame(playcardcnt, YLONG, XLONG, "+", " ")
+            ypos = len(self.artboard) - (YLONG-YSUITPOINT)
+            xstart = XSUITPOINT - XLONG
+            for i in range(playcardcnt):
+                item_card = self.cards.roundplayingcardrecord[i]
+                strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
+                xstart = xstart + XLONG
+                self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
+                log.LoggerDebug(["出牌区显示", strsuitpoint, xstart, ypos, len(self.artboard)])
+        else:
+            self.PaintingCardsFrame(1, YLONG, XLONG, " ", " ")
+        self.PaintingCardsFrame(1, 4, XLONG*len(self.cards.hand), " ", " ")
     #手牌区绘制
     def PaintingHandCards(self):
         self.PaintingCardsFrame(len(self.cards.hand), YLONG, XLONG, "+", " ")
         handcardcnt = len(self.cards.hand)
-        xstart = XSUITPOINT - YLONG
+        xstart = XSUITPOINT - XLONG
         ypos = len(self.artboard) - (YLONG-YSUITPOINT)
         for i in range(handcardcnt):
             item_card = self.cards.hand[i]
             strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
-            xstart = xstart + YLONG
+            xstart = xstart + XLONG
             self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
         # 鼠标选中牌向上弹出,焦点牌上边加粗
-        log.LoggerDebug(["结算选中牌&焦点牌", self.cards.roundplayingcardrecord, self.cards.focuscard])
-        up_leng = YLONG // 2
+        log.LoggerDebug(["结算选中牌&焦点牌", self.cards.roundplayingcardcache, self.cards.focuscard])
+        up_leng = 2
         for i in range(handcardcnt):
             item_card = self.cards.hand[i]
-            if item_card.no in self.cards.roundplayingcardrecord: # 选中牌
+            if item_card.no in self.cards.roundplayingcardcache: # 选中牌
                 for j in range(YLONG):
                     ypos = len(self.artboard)-YLONG+j
                     xpos = XLONG*i
@@ -124,7 +139,7 @@ class window:
                     self.artboard[ypos] = self.artboard[ypos][:xpos] + " "*XLONG + self.artboard[ypos][xpos+XLONG:]
             if item_card.no == self.cards.focuscard:    # 鼠标焦点牌
                 ypos = len(self.artboard)-YLONG-1
-                if self.cards.focuscard in self.cards.roundplayingcardrecord:
+                if self.cards.focuscard in self.cards.roundplayingcardcache:
                     ypos = ypos-up_leng
                 xpos = XLONG*i
                 self.artboard[ypos] = self.artboard[ypos][:xpos] + "+"*XLONG + self.artboard[ypos][xpos+XLONG:]
@@ -150,8 +165,6 @@ class GameController:
         button = tk.Button(self.root, text="出牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=0)
         button.bind("<Button-1>", lambda event: self.PlayButtonClickLogic(event))
-        # 创建弃牌按钮
-
         # 创建花色/点数排序按钮
         button = tk.Button(self.root, text="花色", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=2)
@@ -159,6 +172,10 @@ class GameController:
         button = tk.Button(self.root, text="点数", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
         button.grid(row=2, column=3)
         button.bind("<Button-1>", lambda event: self.SortButtonClickLogic(event,GlobData.COMMAND_SORT_BY_POINT_SIGNAL))
+        # 创建弃牌按钮
+        button = tk.Button(self.root, text="弃牌", width=10, height=5,bg="#4CAF50",fg="white",font=('Arial', 12, 'bold'))
+        button.grid(row=2, column=5)
+        button.bind("<Button-1>", lambda event: self.FoldButtonClickLogic(event))
 
         self.root.mainloop()
     def create_dynamic_pocker_button(self):
@@ -195,9 +212,16 @@ class GameController:
         self.Handler.push(self.MainWin.PaintingMainWindows)
     def PlayButtonClickLogic(self, event): # 点击出牌
         self.Handler.push(self.PockerCards.PlayingCards)
-    def SortButtonClickLogic(self, event, args):
+    def SortButtonClickLogic(self, event, args): # 排序
         self.Handler.push(self.PockerCards.SortTypeSet, args)
         self.Handler.push(self.PockerCards.Sorting)
         self.Handler.push(self.MainWin.PaintingMainWindows)
         self.Handler.push(self.create_dynamic_pocker_button)
-
+    def FoldButtonClickLogic(self, event): # 弃牌
+        self.Handler.push(self.PockerCards.LaunchCards)
+        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(time.sleep(1))
+        self.Handler.push(self.PockerCards.PlaceInCemetery)
+        self.Handler.push(self.PockerCards.Licensing)
+        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.create_dynamic_pocker_button)
