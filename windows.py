@@ -24,7 +24,6 @@ class window:
         self.handler = handler
         self.tool = CMDTool.CMDtool()
     def PaintingMainWindows(self):
-        os.system('cls')
         # 信息栏
         self.PaintingInformationBar()
         # 小丑牌&塔罗牌
@@ -36,6 +35,7 @@ class window:
         self.Painting()
     #打印
     def Painting(self):
+        os.system('cls')
         self.tool.Spraying(self.infor_bar)
         self.tool.Spraying(self.jocker_bar)
         self.tool.Spraying(self.table_bar)
@@ -125,26 +125,34 @@ class GameController:
     def EnterLogic(self,event, btnum): # 鼠标接触按钮
         log.LoggerDebug(["鼠标聚焦按钮：",btnum])
         self.Handler.push(self.PockerCards.MouseFocusOn,btnum)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.Painting)
     def LeaveLogic(self,event, btnum): # 鼠标离开按钮
         self.Handler.push(self.PockerCards.MouseFocusOff)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.Painting)
     def PockerClickLogic(self,event, args): # 鼠标点击pocker按钮
         log.LoggerDebug(["点击选中牌", args])
         self.Handler.push(self.PockerCards.ClickPocker, args)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.Painting)
     def PlayButtonClickLogic(self, event): # 点击出牌
         self.Handler.push(self.PockerCards.PlayingCards)
     def SortButtonClickLogic(self, event, args): # 排序
         self.Handler.push(self.PockerCards.SortTypeSet, args)
         self.Handler.push(self.PockerCards.Sorting)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.Painting)
         self.Handler.push(self.create_dynamic_pocker_button)
     def FoldButtonClickLogic(self, event): # 弃牌
         self.Handler.push(self.PockerCards.LaunchCards)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.PaintingTableErea)
+        self.Handler.push(self.MainWin.Painting)
         self.Handler.push(time.sleep(1))
         self.Handler.push(self.PockerCards.PlaceInCemetery)
         self.Handler.push(self.PockerCards.Licensing)
-        self.Handler.push(self.MainWin.PaintingMainWindows)
+        self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.PaintingTableErea)
+        self.Handler.push(self.MainWin.Painting)
         self.Handler.push(self.create_dynamic_pocker_button)
