@@ -8,35 +8,21 @@ import GlobData
 import tkinter as tk
 import time
 import log
-
-###PockerCard图形数据###
-#长宽
-XLONG = 10 # 宽
-YLONG = 10 # 长
-#花色点数起始行列
-XSUITPOINT = 1
-YSUITPOINT = 1
-
-### 小丑牌图形数据 ***
-
-### 出牌区图形数据 ***
-XTABLELONG = XLONG*10
-YTABLELONG = YLONG + 2
-
-###信息栏###
-#信息栏大小
-XIBLONG = XLONG * 8
-YIBLONG = YLONG
-
+import CMDTool
 
 
 class window:
-    artboard = []
     cards = None
     handler = None
+    tool = None
+    infor_bar = []
+    jocker_bar = []
+    table_bar = []
+    hand_bar = []
     def __init__(self, cards, handler) -> None:
         self.cards = cards
         self.handler = handler
+        self.tool = CMDTool.CMDtool()
     def PaintingMainWindows(self):
         os.system('cls')
         # 信息栏
@@ -48,101 +34,38 @@ class window:
         # 手牌
         self.PaintingHandCards()
         self.Painting()
-        self.CleanBoard()
-    #牌框绘制        
-    def PaintingCardsFrame(self, cnt, ylong, xlong, FrameChar, PaddingChar):
-        BoardThisTime = []
-        for _ in range(cnt):
-            for j in range(ylong):
-                itemhorizontal = ""
-                for i in range(xlong):
-                    if j == 0 or j == ylong - 1:
-                        itemhorizontal=itemhorizontal+FrameChar
-                    else:
-                        if i == 0 or i == xlong - 1:
-                            itemhorizontal=itemhorizontal+FrameChar
-                        else:
-                            itemhorizontal=itemhorizontal+PaddingChar
-                if j >= len(BoardThisTime):
-                    BoardThisTime.append("")
-                BoardThisTime[j] = BoardThisTime[j] + itemhorizontal
-        self.artboard.extend(BoardThisTime)
-        return len(self.artboard)
     #打印
     def Painting(self):
-        for itemhorizontal in self.artboard: 
-            print(itemhorizontal) 
-    #清空画板
-    def CleanBoard(self):
-        self.artboard=[]
-    # 字符串长度
-    def CalculationLength(self, thestr):
-        strcnt = 0
-        for c in thestr:
-            code = ord(c)
-            if (0x4E00 <= code <= 0x9FA5) or (0x3400 <= code <= 0x4DBF) or (0x3000 <= code <= 0x303F) or (0xFF00 <= code <= 0xFFEF):
-                strcnt += 2
-            else:
-                strcnt += 1
-        return strcnt
-    #文本信息通用绘制
-    def PaintingCommonTXT(self, str, x, y):
-        strcnt = self.CalculationLength(str)
-        self.artboard[y] = self.artboard[y][:x] + str + self.artboard[y][strcnt+x:]
+        self.tool.Spraying(self.infor_bar)
+        self.tool.Spraying(self.jocker_bar)
+        self.tool.Spraying(self.table_bar)
+        self.tool.Spraying(self.hand_bar)
     # 信息栏绘制
     def PaintingInformationBar(self):
-        self.PaintingCardsFrame(1, YIBLONG, XIBLONG, "+", " ")
-        barstr = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
-        self.PaintingCommonTXT(barstr, 2, 2)
+        self.infor_bar = self.tool.PaintFrame(1, CMDTool.YIBLONG, CMDTool.XIBLONG, "+", " ")
+        game_str = "尹建文的小丑牌"
+        self.tool.PaintComTXT(game_str, (CMDTool.XIBLONG-self.tool.CalculationLength(game_str))//2, 1, self.infor_bar)
+        desk_str = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
+        self.tool.PaintComTXT(desk_str, 2, 2, self.infor_bar)
     #小丑牌&塔罗牌绘制
     def PaintingJockerTarot(self):
-        self.PaintingCardsFrame(5, YLONG, XLONG, "+", " ")
+        self.jocker_bar = self.tool.PaintFrame(1, CMDTool.YEXTRAEREALONG, CMDTool.XLONG*5, " ", " ")
+        jocker_erea = self.tool.PaintFrame(5, CMDTool.YLONG, CMDTool.XLONG, "+", " ")
+        self.tool.AlterBoard(None, None, jocker_erea, self.jocker_bar)
     #出牌区绘制
     def PaintingTableErea(self):
-        self.PaintingCardsFrame(1, 1, XLONG*len(self.cards.hand), " ", " ")
-        playcardcnt = len(self.cards.roundplayingcardrecord)
-        if playcardcnt > 0:
-            self.PaintingCardsFrame(playcardcnt, YLONG, XLONG, "+", " ")
-            ypos = len(self.artboard) - (YLONG-YSUITPOINT)
-            xstart = XSUITPOINT - XLONG
-            for i in range(playcardcnt):
-                item_card = self.cards.roundplayingcardrecord[i]
-                strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
-                xstart = xstart + XLONG
-                self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
-                log.LoggerDebug(["出牌区显示", strsuitpoint, xstart, ypos, len(self.artboard)])
+        if len(self.cards.roundplayingcardrecord) > 0:
+            self.table_bar = self.tool.PaintPockerCards("+", " ", self.cards.roundplayingcardrecord)
         else:
-            self.PaintingCardsFrame(1, YLONG, XLONG, " ", " ")
-        self.PaintingCardsFrame(1, 4, XLONG*len(self.cards.hand), " ", " ")
+            self.table_bar = self.tool.PaintFrame(1, CMDTool.YLONG, CMDTool.XLONG*8, " ", " ")
     #手牌区绘制
     def PaintingHandCards(self):
-        self.PaintingCardsFrame(len(self.cards.hand), YLONG, XLONG, "+", " ")
-        handcardcnt = len(self.cards.hand)
-        xstart = XSUITPOINT - XLONG
-        ypos = len(self.artboard) - (YLONG-YSUITPOINT)
-        for i in range(handcardcnt):
-            item_card = self.cards.hand[i]
-            strsuitpoint = GlobData.POINT[item_card.point] + GlobData.SUIT[item_card.suit]
-            xstart = xstart + XLONG
-            self.PaintingCommonTXT(strsuitpoint, xstart, ypos)
+        self.hand_bar = self.tool.PaintFrame(1, CMDTool.YEXTRAEREALONG, CMDTool.XLONG*len(self.cards.hand), " ", " ")
+        cards_erea = self.tool.PaintPockerCards("+", " ", self.cards.hand)
+        self.tool.AlterBoard(None, None, cards_erea, self.hand_bar)
         # 鼠标选中牌向上弹出,焦点牌上边加粗
         log.LoggerDebug(["结算选中牌&焦点牌", self.cards.roundplayingcardcache, self.cards.focuscard])
-        up_leng = 2
-        for i in range(handcardcnt):
-            item_card = self.cards.hand[i]
-            if item_card.no in self.cards.roundplayingcardcache: # 选中牌
-                for j in range(YLONG):
-                    ypos = len(self.artboard)-YLONG+j
-                    xpos = XLONG*i
-                    ynewpos = ypos-up_leng
-                    self.artboard[ynewpos] = self.artboard[ynewpos][:xpos] + self.artboard[ypos][xpos:xpos+XLONG] + self.artboard[ynewpos][xpos+XLONG:]
-                    self.artboard[ypos] = self.artboard[ypos][:xpos] + " "*XLONG + self.artboard[ypos][xpos+XLONG:]
-            if item_card.no == self.cards.focuscard:    # 鼠标焦点牌
-                ypos = len(self.artboard)-YLONG-1
-                if self.cards.focuscard in self.cards.roundplayingcardcache:
-                    ypos = ypos-up_leng
-                xpos = XLONG*i
-                self.artboard[ypos] = self.artboard[ypos][:xpos] + "+"*XLONG + self.artboard[ypos][xpos+XLONG:]
+        self.tool.AlterHandCardsBoard(self.cards.hand, self.cards.roundplayingcardcache, self.cards.focuscard, self.hand_bar)
 
 
 # 游戏操控界面
