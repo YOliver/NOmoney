@@ -47,6 +47,9 @@ class window:
         self.tool.PaintComTXT(game_str, (CMDTool.XIBLONG-self.tool.CalculationLength(game_str))//2, 1, self.infor_bar)
         desk_str = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
         self.tool.PaintComTXT(desk_str, 2, 2, self.infor_bar)
+        log.LoggerDebug(["当前牌型：", self.cards.Acctountor.pocker_hand_no])
+        if self.cards.Acctountor.pocker_hand_no != GlobData.NONE:
+            self.tool.PaintComTXT("牌型："+GlobData.PKHADSTR[self.cards.Acctountor.pocker_hand_no], 2, 3, self.infor_bar)
     #小丑牌&塔罗牌绘制
     def PaintingJockerTarot(self):
         self.jocker_bar = self.tool.PaintFrame(1, CMDTool.YEXTRAEREALONG, CMDTool.XLONG*5, " ", " ")
@@ -134,7 +137,10 @@ class GameController:
     def PockerClickLogic(self,event, args): # 鼠标点击pocker按钮
         log.LoggerDebug(["点击选中牌", args])
         self.Handler.push(self.PockerCards.ClickPocker, args)
+        f = self.Handler.push(self.PockerCards.GetCardByNo)
+        self.Handler.attach(f, self.PockerCards.Acctountor.HandIdentification)
         self.Handler.push(self.MainWin.PaintingHandCards)
+        self.Handler.push(self.MainWin.PaintingInformationBar)
         self.Handler.push(self.MainWin.Painting)
     def PlayButtonClickLogic(self, event): # 点击出牌
         self.Handler.push(self.PockerCards.PlayingCards)
@@ -146,8 +152,10 @@ class GameController:
         self.Handler.push(self.create_dynamic_pocker_button)
     def FoldButtonClickLogic(self, event): # 弃牌
         self.Handler.push(self.PockerCards.LaunchCards)
+        self.Handler.push(self.PockerCards.Acctountor.ResetHandNo)
         self.Handler.push(self.MainWin.PaintingHandCards)
         self.Handler.push(self.MainWin.PaintingTableErea)
+        self.Handler.push(self.MainWin.PaintingInformationBar)
         self.Handler.push(self.MainWin.Painting)
         self.Handler.push(time.sleep(1))
         self.Handler.push(self.PockerCards.PlaceInCemetery)

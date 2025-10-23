@@ -24,7 +24,9 @@ class Cards:
     focuscard = -1  # 鼠标焦点牌
     sort_type = GlobData.COMMAND_SORT_BY_POINT_SIGNAL # 排序方式
     serial_factory = -1  #编号工厂
-    def __init__(self) -> None:
+    Acctountor = None
+    def __init__(self, Acctountor) -> None:
+        self.Acctountor = Acctountor
         for item_card in GlobData.BASIC_HAND:
             num = self.serial_product()
             item = Card(item_card[0],item_card[1], item_card[2], num)
@@ -79,3 +81,9 @@ class Cards:
     def PlaceInCemetery(self):#将牌放入墓地
         self.cemetery.extend(self.roundplayingcardrecord)
         self.roundplayingcardrecord = []
+    def GetCardByNo(self): # 通过编号获取所有卡牌列表
+        cards_cache = []
+        for card in self.hand:
+            if card.no in self.roundplayingcardcache:
+                cards_cache.append(card)
+        return cards_cache

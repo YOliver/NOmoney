@@ -12,8 +12,8 @@ import Windows
 
 if __name__ == "__main__":
     print("小丑牌启动...")
-    Pocker = CardManage.Cards()
-    Acctountor = Accounting.accountant(Pocker)
+    Acctountor = Accounting.accountant()
+    Pocker = CardManage.Cards(Acctountor)
     HandlerFunc = Handler.HandlerFunc()
     MainWin = Windows.window(Pocker, HandlerFunc)
 
