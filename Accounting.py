@@ -42,4 +42,10 @@ class accountant:
     # 牌型记录变量回位
     def ResetHandNo(self):
         self.pocker_hand_no = GlobData.NONE
-
+    # 获取牌型和统计分
+    def GetTypeAndScoreStr(self):
+        if self.pocker_hand_no == GlobData.NONE:
+            return ""
+        basic_score = GlobData.PKHADSCO[self.pocker_hand_no]
+        total_score = basic_score[0]*basic_score[1]
+        return GlobData.PKHADSTR[self.pocker_hand_no]+" "+str(basic_score[0])+"X"+str(basic_score[1])+"="+str(total_score)

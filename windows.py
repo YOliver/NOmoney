@@ -47,9 +47,10 @@ class window:
         self.tool.PaintComTXT(game_str, (CMDTool.XIBLONG-self.tool.CalculationLength(game_str))//2, 1, self.infor_bar)
         desk_str = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
         self.tool.PaintComTXT(desk_str, 2, 2, self.infor_bar)
-        log.LoggerDebug(["当前牌型：", self.cards.Acctountor.pocker_hand_no])
-        if self.cards.Acctountor.pocker_hand_no != GlobData.NONE:
-            self.tool.PaintComTXT("牌型："+GlobData.PKHADSTR[self.cards.Acctountor.pocker_hand_no], 2, 3, self.infor_bar)
+        hand_pocker_str = self.cards.Acctountor.GetTypeAndScoreStr()
+        if len(hand_pocker_str) > 0:
+            log.LoggerDebug(["当前牌型：", hand_pocker_str])
+            self.tool.PaintComTXT(hand_pocker_str, (CMDTool.XIBLONG-self.tool.CalculationLength(hand_pocker_str))//2, 3, self.infor_bar)
     #小丑牌&塔罗牌绘制
     def PaintingJockerTarot(self):
         self.jocker_bar = self.tool.PaintFrame(1, CMDTool.YEXTRAEREALONG, CMDTool.XLONG*5, " ", " ")
