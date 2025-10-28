@@ -87,3 +87,5 @@ class Cards:
             if card.no in self.roundplayingcardcache:
                 cards_cache.append(card)
         return cards_cache
+    def GetCardsRecord(self): # 获取出牌列表
+        return self.roundplayingcardrecord

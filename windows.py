@@ -43,7 +43,7 @@ class window:
     # 信息栏绘制
     def PaintingInformationBar(self):
         self.infor_bar = self.tool.PaintFrame(1, CMDTool.YIBLONG, CMDTool.XIBLONG, "+", " ")
-        game_str = "尹建文的小丑牌"
+        game_str = "===尹建文的小丑牌==="
         self.tool.PaintComTXT(game_str, (CMDTool.XIBLONG-self.tool.CalculationLength(game_str))//2, 1, self.infor_bar)
         desk_str = "牌堆：" + str(len(self.cards.deck)) + "/" + str(len(GlobData.BASIC_HAND)) + "   " + "墓地：" + str(len(self.cards.cemetery))
         self.tool.PaintComTXT(desk_str, 2, 2, self.infor_bar)
@@ -144,7 +144,12 @@ class GameController:
         self.Handler.push(self.MainWin.PaintingInformationBar)
         self.Handler.push(self.MainWin.Painting)
     def PlayButtonClickLogic(self, event): # 点击出牌
-        self.Handler.push(self.PockerCards.PlayingCards)
+        self.Handler.push(self.PockerCards.LaunchCards)
+        f = self.Handler.push(self.PockerCards.GetCardsRecord)
+        self.Handler.attach(f, self.PockerCards.Acctountor.HandIdentification)
+        
+        self.Handler.push(self.PockerCards.PlaceInCemetery)
+        self.Handler.push(self.PockerCards.Licensing)
     def SortButtonClickLogic(self, event, args): # 排序
         self.Handler.push(self.PockerCards.SortTypeSet, args)
         self.Handler.push(self.PockerCards.Sorting)

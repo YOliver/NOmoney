@@ -7,7 +7,7 @@ import GlobData
 
 class accountant:
     pocker_hand_no = None
-    score = []
+    effective_cards = []
     def __init__(self) -> None:
         self.pocker_hand_no = GlobData.NONE
     # 牌型判定+基础得分
@@ -39,6 +39,7 @@ class accountant:
             self.pocker_hand_no = GlobData.PAIR
         else: # 高牌
             self.pocker_hand_no = GlobData.HIGH
+        self.geteffcardslist(self.pocker_hand_no, cardslist, pointledger)
     # 牌型记录变量回位
     def ResetHandNo(self):
         self.pocker_hand_no = GlobData.NONE
@@ -49,3 +50,30 @@ class accountant:
         basic_score = GlobData.PKHADSCO[self.pocker_hand_no]
         total_score = basic_score[0]*basic_score[1]
         return GlobData.PKHADSTR[self.pocker_hand_no]+" "+str(basic_score[0])+"X"+str(basic_score[1])+"="+str(total_score)
+    # 获取有效的牌列表
+    def geteffcardslist(self, hand_type, cardslist, pointledger):
+        if hand_type == GlobData.STRATFLUSH or hand_type == GlobData.FULLHS or hand_type == GlobData.STRAT or hand_type == GlobData.FLUSH:
+            self.effective_cards = cardslist
+            return
+        positions = []
+        if hand_type == GlobData.FOUR:
+            positions = [pointledger.index(4)]
+        if hand_type == GlobData.FULLHS:
+            positions = [pointledger.index(3),pointledger.index(2)]
+        if hand_type == GlobData.THREE:
+            positions = [pointledger.index(3)]
+        if hand_type == GlobData.TWOP:
+            positions = [index for index, value in enumerate(pointledger) if value == 2]
+        if hand_type == GlobData.PAIR:
+            positions = [pointledger.index(2)]
+        if hand_type == GlobData.HIGH:
+            positions.append(0)
+            for i in range(len(pointledger)):
+                if pointledger[i] == 1:
+                    positions[0] = i
+        for card in cardslist:
+            if card.point in positions:
+                self.effective_cards.append(card)
+
+                
+
